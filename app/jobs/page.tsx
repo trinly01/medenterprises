@@ -1,8 +1,39 @@
 import { getAllJobs } from '../../lib/jobs';
 import JobCard from './_components/JobCard';
+import JobFilters from './_components/JobFilters';
+import type { Metadata } from 'next';
+import type { Job } from '../../types/job';
 
-export default async function JobsPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Medical Jobs | MedEnterprises',
+    description: 'Find your next medical career opportunity in New Zealand',
+    openGraph: {
+      title: 'Medical Jobs | MedEnterprises',
+      description: 'Find your next medical career opportunity in New Zealand',
+      url: 'https://medenterprises.com/jobs',
+    },
+    alternates: {
+      canonical: 'https://medenterprises.com/jobs',
+    },
+  };
+}
+
+interface JobsPageProps {
+  searchParams: Promise<{ department?: string; type?: string }>;
+}
+
+export default async function JobsPage({ searchParams }: JobsPageProps) {
   const jobs = await getAllJobs();
+  const params = await searchParams;
+  const department = params.department;
+  const type = params.type;
+
+  const filteredJobs = jobs.filter((job: Job) => {
+    if (department && job.department !== department) return false;
+    if (type && job.type !== type) return false;
+    return true;
+  });
 
   return (
     <main className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -14,12 +45,10 @@ export default async function JobsPage() {
           </p>
         </div>
 
-        <div className="bg-white p-4 rounded-lg border border-gray-200 mb-6">
-          <p className="text-sm text-gray-500">Filters will be added in Commit 3</p>
-        </div>
+        <JobFilters jobs={jobs} />
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-6">
-          {jobs.map((job) => (
+          {filteredJobs.map((job: Job) => (
             <JobCard key={job.id} job={job} />
           ))}
         </div>
