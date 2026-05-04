@@ -1,33 +1,23 @@
 import { Job } from '../types/job';
-import { jobs } from './data/jobs';
 
 /**
- * Fetch all jobs from the data source.
- * Currently uses local fixture data.
- * For external API with ISR: uncomment the fetch implementation below.
+ * Fetch all jobs from the Next.js API route (/api/jobs).
+ * Uses ISR with revalidation every hour.
  */
 export async function getAllJobs(): Promise<Job[]> {
-  // For local fixture data (current implementation):
-  return jobs;
-
-  // For external API with ISR (uncomment to use):
-  // const res = await fetch('https://external-feed.com/api/jobs', {
-  //   next: { revalidate: 3600 } // Revalidate every hour
-  // });
-  // if (!res.ok) throw new Error('Failed to fetch jobs');
-  // return res.json();
+  const res = await fetch('http://localhost:3000/api/jobs', {
+    next: { revalidate: 3600 } // ISR: revalidate every hour
+  });
+  if (!res.ok) throw new Error('Failed to fetch jobs');
+  const data = await res.json();
+  return data.jobs; // API returns { jobs: [...] }
 }
 
 /**
  * Fetch a single job by its slug.
- * Currently uses local fixture data.
- * For external API with ISR: uncomment the fetch implementation below.
+ * Fetches all jobs and finds the matching one.
  */
 export async function getJobBySlug(slug: string): Promise<Job | undefined> {
-  // For local fixture data (current implementation):
-  return jobs.find((job) => job.slug === slug);
-
-  // For external API with ISR (uncomment to use):
-  // const allJobs = await getAllJobs();
-  // return allJobs.find((job) => job.slug === slug);
+  const allJobs = await getAllJobs();
+  return allJobs.find((job) => job.slug === slug);
 }
