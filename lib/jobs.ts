@@ -1,11 +1,22 @@
 import { Job } from '../types/job';
 
+const getBaseUrl = () => {
+  // For Vercel deployment
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  // For local development
+  return process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+};
+
 /**
  * Fetch all jobs from the Next.js API route (/api/jobs).
  * Uses ISR with revalidation every hour.
  */
 export async function getAllJobs(): Promise<Job[]> {
-  const res = await fetch('http://localhost:3000/api/jobs', {
+
+  const baseUrl = getBaseUrl();
+  const res = await fetch(`${baseUrl}/api/jobs`, {
     next: { revalidate: 3600 } // ISR: revalidate every hour
   });
   if (!res.ok) throw new Error('Failed to fetch jobs');
