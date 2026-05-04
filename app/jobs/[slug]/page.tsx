@@ -2,7 +2,7 @@ import { getJobBySlug, getAllJobs } from '../../../lib/jobs';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import type { Job } from '../../../types/job';
-import ApplyButton from '../../_components/ApplyButton';
+import ApplyButton from '../_components/ApplyButton';
 
 export const revalidate = 3600;
 
