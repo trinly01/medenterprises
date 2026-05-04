@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { getAllJobs } from './lib/jobs';
+import { getAllJobs } from '../lib/jobs';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const jobs = await getAllJobs();
