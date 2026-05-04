@@ -6,10 +6,10 @@ import type { Job } from '../../types/job';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: 'Medical Jobs | MedEnterprises',
+    title: 'Medical Jobs',
     description: 'Find your next medical career opportunity in New Zealand',
     openGraph: {
-      title: 'Medical Jobs | MedEnterprises',
+      title: 'Medical Jobs',
       description: 'Find your next medical career opportunity in New Zealand',
       url: 'https://medenterprises.com/jobs',
     },

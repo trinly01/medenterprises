@@ -21,17 +21,17 @@ export async function generateMetadata({ params }: JobPageProps): Promise<Metada
 
   if (!job) {
     return {
-      title: 'Job Not Found | MedEnterprises',
+      title: 'Job Not Found',
     };
   }
 
   const description = job.description.replace(/<[^>]*>/g, '').slice(0, 150);
 
   return {
-    title: `${job.title} | MedEnterprises`,
+    title: job.title,
     description,
     openGraph: {
-      title: `${job.title} | MedEnterprises`,
+      title: job.title,
       description,
       url: `https://medenterprises.com/jobs/${job.slug}`,
     },
@@ -57,8 +57,51 @@ export default async function JobPage({ params }: JobPageProps) {
     });
   };
 
+  const getEmploymentType = (type: string) => {
+    const mapping: Record<string, string> = {
+      'Full-time': 'FULL_TIME',
+      'Part-time': 'PART_TIME',
+      'Contract': 'CONTRACT',
+    };
+    return mapping[type] || type.toUpperCase();
+  };
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'JobPosting',
+    title: job.title,
+    description: job.description.replace(/<[^>]*>/g, ''),
+    datePosted: job.postedDate,
+    ...(job.closingDate && { validThrough: job.closingDate }),
+    hiringOrganization: {
+      '@type': 'Organization',
+      name: 'MedEnterprises',
+    },
+    jobLocation: {
+      '@type': 'Place',
+      address: job.location,
+    },
+    baseSalary: {
+      '@type': 'MonetaryAmount',
+      value: {
+        '@type': 'QuantitativeValue',
+        minValue: job.salary.min,
+        maxValue: job.salary.max,
+        unitText: 'YEAR',
+      },
+      currency: job.salary.currency,
+    },
+    employmentType: getEmploymentType(job.type),
+    industry: 'Healthcare',
+  };
+
   return (
     <main className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       <div className="max-w-4xl mx-auto">
         <a href="/jobs" className="text-blue-600 hover:text-blue-800 mb-6 inline-block">
           ← Back to Job Listings
