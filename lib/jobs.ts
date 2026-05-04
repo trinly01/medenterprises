@@ -1,4 +1,5 @@
 import { Job } from '../types/job';
+import jobs from '../data/jobs.json';
 
 const getBaseUrl = () => {
   // For Vercel deployment
@@ -19,7 +20,7 @@ export async function getAllJobs(): Promise<Job[]> {
   const res = await fetch(`${baseUrl}/api/jobs`, {
     next: { revalidate: 3600 } // ISR: revalidate every hour
   });
-  if (!res.ok) throw new Error('Failed to fetch jobs');
+  if (!res.ok) return jobs.jobs;
   const data = await res.json();
   return data.jobs; // API returns { jobs: [...] }
 }
