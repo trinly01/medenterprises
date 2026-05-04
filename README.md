@@ -14,7 +14,7 @@ npm test  # Run tests
 
 ## Live URL
 
-Not yet deployed. Add Vercel deployment URL here when available.
+**Production**: [https://medenterprises.vercel.app](https://medenterprises.vercel.app)
 
 ## Rendering Strategy - Detailed Justification
 
